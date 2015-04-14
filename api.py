@@ -8,7 +8,7 @@ Please see https://developers.google.com/maps/documentation/geocoding/ for more 
 import os
 
 
-API_KEY = os.environ.get['GEOCODING_API_KEY']
+API_KEY = os.environ['GEOCODING_API_KEY']
 
 BASE_URL = 'http://maps.googleapis.com/maps/api/geocode/json?'
 
@@ -17,3 +17,11 @@ def get_geocoords(address, city, state):
 	 return a tuple with the latitude and longitude of that address.
 
 	 If none is found, the coordinates of the city and state should be returned."""
+
+
+def main():
+	pass
+
+
+if __name__ == '__main__':
+	main()
