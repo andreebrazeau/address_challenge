@@ -50,6 +50,12 @@ class User(Base):
 
 	address = relationship("Address", backref=backref("username"))
 
+	def __init__(self, username):
+		self.username = username
+
+	def __repr__(self):
+		return "<Username object s%>" % self.username
+
 
 class City(Base):
 
