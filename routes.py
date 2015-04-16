@@ -27,10 +27,21 @@ def capture_data():
 	username_str = request.args.get("username")
 	username_obj = dbcheck.find_username(username_str, session)
 	new_address.username = username_obj
-
-
 	new_address.name = request.args.get("name")
-	new_address.city_name = request.args.get("city")
+
+	city_str = request.args.get("city")
+	# FIXME: for this function call to find_city(), I get a SQLAlchemy error returned stating that 
+	# 'AttributeError: Could not locate column in row for column '_sa_instance_state''.
+	# However, this error is thrown at line 29 of this file. Yet when I *don't* make the function call
+	# to find_city() here, line 29 seems to succeed.
+	# 
+	# Clearly the issue has to do with how the SQLAlchemy ORM behaves, but unfortunately I've run out of
+	# time to familiarize myself with this fairly complicated tool. 
+
+	city_obj = dbcheck.find_city(city_str, session)
+	new_address.city_name = city_obj
+
+
 	new_address.state_abbreviation = request.args.get("state")
 	new_address.zipcode = request.args.get("zipcode")
 

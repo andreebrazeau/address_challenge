@@ -66,6 +66,12 @@ class City(Base):
 
 	address = relationship("Address", backref=backref("city_name"))
 
+	def __init__(self, city_name):
+		self.city_name = city_name
+
+	def __repr__(self):
+		return "<City object s%>" % self.city_name
+
 
 class State(Base):
 	
