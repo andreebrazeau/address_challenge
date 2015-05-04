@@ -20,26 +20,32 @@ def go_home():
 # but since the requirements are fairly focused and straightforward, all the code's here.
 @app.route('/capture_data', methods=['GET'])
 def capture_data():
-
-	session = db.connect()
+	# calling this dbsession to differentiate from a Flask session object
+	dbsession = db.connect()
 	new_address = db.Address()
 
 	username_str = request.args.get("username")
-	username_obj = dbcheck.find_username(username_str, session)
+	username_obj = dbcheck.find_username(username_str, dbsession)
 
 	new_address.username = username_obj
 	new_address.name = request.args.get("name")
 
 	city_str = request.args.get("city")
-	city_obj = dbcheck.find_city(city_str, session)
+	city_obj = dbcheck.find_city(city_str, dbsession)
 	new_address.city_name = city_obj
-	new_address.state_abbreviation = request.args.get("state")
-	new_address.zipcode = request.args.get("zipcode")
+
+	state_abbr_str = request.args.get("state")
+	state_obj = dbcheck.find_state(state_abbr_str, dbsession)
+	new_address.state_abbreviation = state_obj
+	
+	zipcode_str = request.args.get("zipcode")
+	zipcode_obj = dbcheck.find_zipcode(zipcode_str, dbsession)
+	new_address.zipcode = zipcode_obj
 
 	# Converting the string input to a bool. Here I might ask a business 
 	# owner what the preferred default is, but it's not a huge deal since I can set
 	# the radio button to be required and force the user to make a choice.
-	if request.args.get.is_billing == "true":
+	if request.args.get("is_billing") == "true":
 		new_address.is_billing = True
 	else:
 		new_address.is_billing = False
@@ -50,9 +56,9 @@ def capture_data():
 	new_address.longitude = str(200)
 
 	# Add the new_address object to the ORM database session
-	db.add(new_address)
+	dbsession.add(new_address)
 	# SQLAlchemy creates an open transaction by default; need to commit the DB transaction.
-	db.commit()
+	dbsession.commit()
 
 	return render_template("confirmation.html")
 

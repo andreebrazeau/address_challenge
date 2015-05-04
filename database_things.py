@@ -93,6 +93,12 @@ class Zipcode(Base):
 
 	address = relationship("Address", backref=backref("zipcode"))
 
+	def __init__(self, zipcode):
+		self.zipcode = zipcode
+
+	def __repr__(self):
+		return "<Zipcode object s%>" % self.zipcode	
+
 
 def connect():
 
