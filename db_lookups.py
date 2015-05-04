@@ -13,21 +13,23 @@ def find_username(username, dbsession):
 	"""Checks the db if there is a username matching the passed parameter already and returns the username object. 
 	If there isn't, it writes the username to the db and returns the new username object."""
 
-	result = dbsession.execute('SELECT * from "Users" where username = :name LIMIT 1', {'name': username})
-	first_row = result.first()
+	result = dbsession.query(db.User).filter_by(username=username).first()
+	# result = dbsession.execute('SELECT * from "Users" where username = :name LIMIT 1', {'name': username})
+	# first_row = result.first()
 
 	# Need to extract the object from the ORM result proxy.
-	if first_row is None:
-		# Create a new instance of user
-		username_object = db.User(username)
-		dbsession.add(username_object)
-		dbsession.flush()
-		dbsession.commit()
-	else:
-		# Assign the existing user object to the variable
-		username_object = first_row
+	# if first_row is None:
+	# 	# Create a new instance of user
+	# 	username_object = db.User(username)
+	# 	dbsession.add(username_object)
+	# 	dbsession.flush()
+	# 	dbsession.commit()
+	# else:
+	# 	# Assign the existing user object to the variable
+	# 	username_object = first_row
 
-	return username_object
+	# return username_object
+	return result
 
 
 def find_city(city, dbsession):
@@ -38,23 +40,23 @@ def find_city(city, dbsession):
 
 	# Since we're creating the FK relation based on ID, and hence the casing has no bearing on 
 	# whether the city record associates with the address, I'm upcasing the city to prevent dupes.
-	city = city.uppercase()
+	city = str(city)
+	# import pdb;pdb.set_trace()
+	city = city.upper()
 
-	city_result = dbsession.execute('SELECT * from "Cities" where city_name = :name LIMIT 1', {'name': city})
-	first_city_row = city_result.first()
+	result = dbsession.query(db.City).filter_by(city_name=city).first()
 
 	# Need to extract the object from the ORM result proxy.
-	if first_row is None:
+	if result is None:
 		# Create a new instance of city
 		city_object = db.City(city)
+		# I'm adding the city without committing the transaction since it would also
+		# commit the address insert transaction that's still open in routes.py.
 		dbsession.add(city_object)
-		dbsession.flush()
-		dbsession.commit()
+		return city_object
 	else:
 		# Assign the existing user object to the variable
-		city_object = first_city_row
-
-	return city_object
+		return result
 
 
 
