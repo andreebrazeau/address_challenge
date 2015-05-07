@@ -32,13 +32,22 @@ class Address(Base):
 
 	id = Column(Integer, primary_key=True)
 	name = Column(String, nullable=False)
+	name_secondary = Column(String, nullable=True)
 	user_id = Column(Integer, ForeignKey("Users.id"), nullable=False)
 	is_billing = Column(Boolean, nullable=False)
 	city_id = Column(Integer, ForeignKey("Cities.id"), nullable=False)
-	state_id = Column(String, ForeignKey("States.id"), nullable=False)
-	zipcode_id = Column(String, ForeignKey("Zipcodes.id"), nullable=False)
+	state_id = Column(Integer, ForeignKey("States.id"), nullable=False)
+	zipcode_id = Column(Integer, ForeignKey("Zipcodes.id"), nullable=False)
 	latitude = Column(String, nullable=False)
 	longitude = Column(String, nullable=False)
+
+	username = relationship("User", backref=backref("addresses"))
+	city_name = relationship("City", backref=backref("addresses"))
+	state_abbreviation = relationship("State", backref=backref("addresses"))
+	zipcode = relationship("Zipcode", backref=backref("addresses")) 
+
+	def __repr__(self):
+		return "<Address object %s>" % self.name
 
 
 class User(Base):
@@ -47,8 +56,6 @@ class User(Base):
 
 	id = Column(Integer, primary_key=True)
 	username = Column(String, nullable=False)
-
-	address = relationship("Address", backref=backref("username"))
 
 	def __init__(self, username):
 		self.username = username
@@ -64,8 +71,6 @@ class City(Base):
 	id = Column(Integer, primary_key=True)
 	city_name = Column(String, primary_key=False)
 
-	address = relationship("Address", backref=backref("city_name"))
-
 	def __init__(self, city_name):
 		self.city_name = city_name
 
@@ -80,8 +85,6 @@ class State(Base):
 	id = Column(Integer, primary_key=True)
 	state_abbreviation = Column(String(2), nullable=False)
 
-	address = relationship("Address", backref=backref("state_abbreviation"))
-
 
 class Zipcode(Base):
 	
@@ -90,8 +93,6 @@ class Zipcode(Base):
 	# this is easier for building an API request with.
 	id = Column(Integer, primary_key=True)
 	zipcode = Column(String, nullable=False)
-
-	address = relationship("Address", backref=backref("zipcode"))
 
 	def __init__(self, zipcode):
 		self.zipcode = zipcode
@@ -105,7 +106,7 @@ def connect():
 	global ENGINE
 	global Session
 	
-	ENGINE = create_engine(DATABASE_URL, echo=True)
+	ENGINE = create_engine(DATABASE_URL, echo=False)
 	Session = sessionmaker(bind=ENGINE, autocommit=False, autoflush=False)
 
 	return Session()

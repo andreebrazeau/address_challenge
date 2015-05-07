@@ -34,6 +34,10 @@ def test_find_username():
 # physically removed from the object and the ResultProxy is closed. So the fix was to store the 
 # record I fectch from the ResultProxy object into a variable so I can make additional
 # logic checks against that object after the connection has closed. 
+
+# further note 5/4/15: I changed the code to use the session.query() function instead of session.execute(),
+# which obviates the need for the ResultProxy object. So the above is moot but still a good thing
+# to know when executing raw SQL through an ORM.
 def test_username_exists():
 
 	# Setup by deleting the username from previous test runs
@@ -49,6 +53,9 @@ def test_username_exists():
 	result = dbsession.execute('select * from "Users" where username = \'amg\'')
 	assert result.rowcount == 1
 
+
+def test_api_call():
+	pass
 
 
 

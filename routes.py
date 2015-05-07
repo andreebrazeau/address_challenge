@@ -29,6 +29,7 @@ def capture_data():
 
 	new_address.username = username_obj
 	new_address.name = request.args.get("name")
+	new_address.name_secondary = request.args.get("name2")
 
 	city_str = request.args.get("city")
 	city_obj = dbcheck.find_city(city_str, dbsession)
@@ -50,10 +51,9 @@ def capture_data():
 	else:
 		new_address.is_billing = False
 
-	# TODO: Make the API call to get geocoords.
-	# Hardcoding geocoords to 200, 200 for testing at the moment. 
-	new_address.latitude = str(200)
-	new_address.longitude = str(200)
+	geocoords = api.get_geocoords(address=new_address.name, city=city_str, state=state_abbr_str)
+
+	new_address.latitude, new_address.longitude = geocoords
 
 	# Add the new_address object to the ORM database session
 	dbsession.add(new_address)
@@ -69,6 +69,7 @@ if __name__ == '__main__':
 	app.run( 
 		debug=True,
 		port=PORT,
-		host='127.0.0.1')
+		host='127.0.0.1',
+		ssl_context=('server.crt', 'server.key'))
 
 
