@@ -26,25 +26,20 @@ def get_geocoords(address, city, state):
 	response = requests.get(api_request)
 	# response_string = str(response.content)
 	dict_response = json.loads(response.content)
+	print dict_response
 
-	try:
+	# Check that we have results before extracting coords:
+	if dict_response['status'] == 'OK':
 		lat = dict_response['results'][0]['geometry']['location']['lat']
 		lon = dict_response['results'][0]['geometry']['location']['lng']
-		coords = (lat, lon)	
-		if coords not None:
-			# Check that we have coordinates
-			return coords
-		else:
-			return (0,0)
-			# # Get the geocoords for the city
-			# params = quote_plus("address=" + city + state "&key=" + API_KEY)
-			# second_request = BASE_URL + params
+		coords = (lat, lon)
+		return coords
 
-	except:
-		return (0 ,0)
-
-	# print coords
-	# return coords
+	# If no results, call API again for just city and state
+	elif dict_response['status'] == 'ZERO_RESULTS':
+		# TODO write a helper function to construct the API request and return the 
+		# response as a Python dict for this logical check.
+		return (0,0)
 
 
 def main():
