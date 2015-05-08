@@ -51,7 +51,7 @@ def capture_data():
 	else:
 		new_address.is_billing = False
 
-	geocoords = api.get_geocoords(address=new_address.name, city=city_str, state=state_abbr_str)
+	geocoords = api.get_geocoords(new_address)
 
 	new_address.latitude, new_address.longitude = geocoords
 
