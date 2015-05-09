@@ -39,8 +39,9 @@ def get_geocoords(address):
 
 	# If no results, call API again for just city and state
 	elif dict_response['status'] == 'ZERO_RESULTS':
-		dict_response = call_api(city=address.city_name, state=address.state_abbreviation)
-			# Still need to make sure that second attempt worked:
+		dict_response = call_api(city=city_str, state=state_str)
+		print "this is dict_response on the second API call: ", dict_response
+		# Still need to make sure that second attempt worked:
 		if dict_response['status'] == 'OK':
 			return extract_coords(dict_response)
 	
@@ -55,24 +56,33 @@ def get_geocoords(address):
 		# and its corresponding geocoords in its own table in the event that, say, 
 		# there are many different users living in the same apartment building. 
 		# This would avoid the repetition of querying geocoords for the same street address each time.
-
 		return (37.6,-95.665)
 
 
 def call_api(**kwargs):
 	"""Function to fetch geocoordinates for any combination of parameters accepted
-	by the Google Geocoding API."""
+	by the Google Geocoding API.
+
+	Please note: this function assumes that the front end has validated that
+	the address is formatted correctly as an address."""
 
 	# Put args in the right order for the API:
-	parameters = kwargs['address'] + kwargs['city'] + kwargs['state']
+	parameters = ""
+
+	if 'address' in kwargs:
+		a = kwargs['address']
+		parameters = parameters + a
+	if 'city' in kwargs:
+		c = kwargs['city']
+		parameters = parameters + c
+	if 'state' in kwargs:
+		s = kwargs['state']
+		parameters = parameters + s
 
 	encoded_parameters = quote_plus(parameters)
 	api_request = BASE_URL + "address=" + encoded_parameters + "&key=" + API_KEY
-
 	response = requests.get(api_request)
-	# response_string = str(response.content)
 	dict_response = json.loads(response.content)
-	print dict_response
 
 	return dict_response
 
