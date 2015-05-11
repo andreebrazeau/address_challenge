@@ -23,9 +23,6 @@ def get_geocoords(address):
 	# Am implementing with a quick if/else check to get it working,
 	# because "premature optimization is the root of all evil"
 
-	print "this was passed to get_geocoords(): ", address
-	# import pdb; pdb.set_trace()
-
 	# extract the parameter values from the address obj since they are stored as unicode:
 	address_str = str(address.name)
 	city_str = str(address.city_name.city_name)
@@ -40,7 +37,6 @@ def get_geocoords(address):
 	# If no results, call API again for just city and state
 	elif dict_response['status'] == 'ZERO_RESULTS':
 		dict_response = call_api(city=city_str, state=state_str)
-		print "this is dict_response on the second API call: ", dict_response
 		# Still need to make sure that second attempt worked:
 		if dict_response['status'] == 'OK':
 			return extract_coords(dict_response)

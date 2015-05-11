@@ -3,7 +3,7 @@
 <body>
   <div>
     <h1>Add New Address</h1>
-    <form action='/capture_data'>
+    <form action='/capture_data' id="addressForm">
       Username: <input type="text" name="username"/><br/>
       Address: <input type="text" name="name"/><br/>
       Address 2: <input type="text" name="name2"/><br/>
@@ -14,15 +14,15 @@
         <option value="WA">Washington</option>
         <option value="PA">Pennsylvania</option>
       </select><br/>
-      Zip Code: <input type="text" name="zipcode"/><br/>
+      Zip Code: <input type="number" size="5" name="zipcode" id="zipcode"/><br/>
       Billing address? 
       Y: <input type='radio' name='is_billing' value='true'> 
       N: <input type='radio' name='is_billing' value='false'><br/>
-      <input type="submit"/>
+      <input type="submit" id="submit"/>
     </form>
   </div>
   <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
   <script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
-  <script src="script.js"></script>
+  <script src="./static/script.js"></script>
 </body>
 </html>

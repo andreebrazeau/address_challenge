@@ -85,6 +85,9 @@ class State(Base):
 	id = Column(Integer, primary_key=True)
 	state_abbreviation = Column(String(2), nullable=False)
 
+	def __repr__(self):
+		return "<State object %s>" % self.state_abbreviation
+
 
 class Zipcode(Base):
 	
