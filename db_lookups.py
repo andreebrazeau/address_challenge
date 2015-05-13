@@ -11,6 +11,7 @@ any manual validation in that regard."""
 
 import database_things as db
 
+
 def find_username(username, dbsession):
 	"""Checks the db if there is a username matching the passed parameter already and returns the username object. 
 	If there isn't, it writes the username to the db and returns the new username object."""
@@ -26,6 +27,27 @@ def find_username(username, dbsession):
 	else:
 		# Assign the existing user object to the variable
 		return result
+
+
+def find_address_from_user_id(user_id, dbsession):
+    """Return list of address for a user """
+
+    return dbsession.query(db.Address).filter_by(user_id=user_id).all()
+
+
+def find_address_from_user_id_group_by_type(user_id, dbsession):
+    """Return list of address for a user group by type"""
+
+    addresses = find_address_from_user_id(user_id, dbsession)
+
+    result = {}
+    for address in addresses:
+        if result.get(address.type):
+            result[address.type].append(address)
+        else:
+            result[address.type] = [address]
+    # Need to extract the object from the ORM result proxy.
+    return result
 
 
 def find_city(city, dbsession):

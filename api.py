@@ -16,7 +16,7 @@ API_KEY = os.environ['GEOCODING_API_KEY']
 BASE_URL = 'https://maps.googleapis.com/maps/api/geocode/json?'
 
 def get_geocoords(address):
-	"""Function should take an address object and return a tuple 
+	"""Function should take an address object and return a tuple
 	with the latitude and longitude of that address. If none is found,
 	the coordinates of the city and state should be returned."""
 	# Could potentially implement this recursively?
@@ -28,7 +28,7 @@ def get_geocoords(address):
 	city_str = str(address.city_name.city_name)
 	state_str = str(address.state_abbreviation.state_abbreviation)
 
-	dict_response = call_api(address=address_str, city=city_str, state=state_str)
+	dict_response = google_geocoding(address=address_str, city=city_str, state=state_str)
 
 	# Check that we have results before extracting coords:
 	if dict_response['status'] == 'OK':
@@ -36,7 +36,7 @@ def get_geocoords(address):
 
 	# If no results, call API again for just city and state
 	elif dict_response['status'] == 'ZERO_RESULTS':
-		dict_response = call_api(city=city_str, state=state_str)
+		dict_response = google_geocoding(city=city_str, state=state_str)
 		# Still need to make sure that second attempt worked:
 		if dict_response['status'] == 'OK':
 			return extract_coords(dict_response)
@@ -52,10 +52,10 @@ def get_geocoords(address):
 		# and its corresponding geocoords in its own table in the event that, say, 
 		# there are many different users living in the same apartment building. 
 		# This would avoid the repetition of querying geocoords for the same street address each time.
-		return (37.6,-95.665)
+		return 37.6, -95.665
 
 
-def call_api(**kwargs):
+def google_geocoding(address=None, city=None, state=None):
 	"""Function to fetch geocoordinates for any combination of parameters accepted
 	by the Google Geocoding API.
 
@@ -65,15 +65,16 @@ def call_api(**kwargs):
 	# Put args in the right order for the API:
 	parameters = ""
 
-	if 'address' in kwargs:
-		a = kwargs['address']
-		parameters = parameters + a
-	if 'city' in kwargs:
-		c = kwargs['city']
-		parameters = parameters + c
-	if 'state' in kwargs:
-		s = kwargs['state']
-		parameters = parameters + s
+	if address:
+		parameters = parameters + address  # Do you assume the coma is in the DB? otherwise you will have to add + ","
+	if city:
+		parameters = parameters + city
+	if state:
+		parameters = parameters + state
+
+	# Could even do this:
+	# parameters = (address or "") + (city or "") + (state or "")
+	# But that might not be the best way too. Just a clever one line way to do it.
 
 	encoded_parameters = quote_plus(parameters)
 	api_request = BASE_URL + "address=" + encoded_parameters + "&key=" + API_KEY
@@ -84,12 +85,13 @@ def call_api(**kwargs):
 
 
 def extract_coords(json_as_dict):
-	"""Nice little helper function to pull the geocoords out of a 
+	"""Nice little helper function to pull the geocoords out of a
 	Google Geolocation API json response."""
-	lat = json_as_dict['results'][0]['geometry']['location']['lat']
-	lon = json_as_dict['results'][0]['geometry']['location']['lng']
-	coords = (lat, lon)
-	return coords
+	location = json_as_dict['results'][0]['geometry']['location']
+	lat = location['lat']
+	lon = location['lng']
+
+	return lat, lon
 
 
 def main():
