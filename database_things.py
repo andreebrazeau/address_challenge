@@ -34,7 +34,7 @@ class Address(Base):
     name = Column(String, nullable=False)
     name_secondary = Column(String, nullable=True)
     user_id = Column(Integer, ForeignKey("Users.id"), nullable=False)
-    is_billing = Column(Boolean, nullable=False)
+    type = Column(String, nullable=False)
     city_id = Column(Integer, ForeignKey("Cities.id"), nullable=False)
     state_id = Column(Integer, ForeignKey("States.id"), nullable=False)
     zipcode_id = Column(Integer, ForeignKey("Zipcodes.id"), nullable=False)
@@ -64,7 +64,7 @@ class User(Base):
         return "<Username object s%>" % self.username
 
 
-class City(Base):
+class City(Base):  # Why creating a separate table for the city?
 
     __tablename__ = "Cities"    
 
@@ -78,7 +78,7 @@ class City(Base):
         return "<City object s%>" % self.city_name
 
 
-class State(Base):
+class State(Base):  # Why creating a separate table for the State?
     
     __tablename__ = "States"
 
@@ -89,7 +89,7 @@ class State(Base):
         return "<State object %s>" % self.state_abbreviation
 
 
-class Zipcode(Base):
+class Zipcode(Base):  # Why creating a separate table for the zipcode?
     
     __tablename__ = "Zipcodes"
     # Making the zipcode a string since I'll never need to use it for artithmetic purposes, so
